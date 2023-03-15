@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    input {
+        margin: 10px 0px;
+    }
+
+    table {
+        margin-top: 10px;
+    }
+
+    .container {
+
+        margin-left: 10px;
+        width: 250px;
+    }
+</style>
+
+<body>
+    <h2> ứng dụng quản lý sinh viên! </h2>
+    <div class="container">
+        <label for=""> Tên Sinh Viên </label> <br>
+        <input type="" id="name" placeholder="nhập tên sinh viên "> <br>
+        <label for=""> Mã Sinh Viên </label> <br>
+        <input type="" id="msv" placeholder="nhập mã sinh viên "> <br>
+        <label for=""> Quê Quán </label> <br>
+        <input type="" id="address" placeholder="nhập Quê Quán "> <br>
+        <label for=""> Số điện thoại </label> <br>
+        <input type="" id="phone" placeholder="nhập số điện thoại  "> <br>
+        <button onclick="saveUser()"> Lưu </button>
+    </div>
+    <table border="1px" id="table">
+        <!--  <tr>
+            <td> Tên Sinh Viên</td>
+            <td> Mã Sinh Viên</td>
+            <td> Quê Quán </td>
+            <td> Số điện thoại </td>
+        </tr>
+        <tr>
+            <td> hoàng</td>
+            <td> msv01</td>
+            <td> hn </td>
+            <td>888998 </td>
+        </tr>
+        <tr>
+            <td> hoa</td>
+            <td> msv02</td>
+            <td> hcm </td>
+            <td>67676 </td>
+        </tr>
+        <tr>
+            <td> thuý</td>
+            <td> msv03</td>
+            <td> đà nẵng </td>
+            <td>9889898 </td>
+        </tr>  -->
+    </table>
+    <script>
+        /* 
+            khi lưu mảng trên local Storage thì phải chuyển về dạng JSON;
+         */
+        // function lưu thông tin một user vào mảng listStudents.
+        let listStudents = JSON.parse(localStorage.getItem("listStudents"));
+        if (listStudents == null) {
+            listStudents = [];
+        }
+        //    console.log(listStudent);
+        function saveUser() {
+            let name = document.getElementById("name").value;
+            let msv = document.getElementById("msv").value;
+            let address = document.getElementById("address").value;
+            let phone = document.getElementById("phone").value;
+            let flag=JSON.parse(localStorage.getItem("flag"));
+           
+            let userInfo = {
+                name: name,
+                maSinhVien: msv,
+                address: address,
+                phoneNumber: phone,
+            }
+             if (flag != null) {
+                listStudents.splice(flag, 1, userInfo);
+                localStorage.setItem("listStudents",JSON.stringify(listStudents));
+                renderListStudent();
+                localStorage.removeItem("flag");
+                return;
+            }
+            listStudents.push(userInfo);
+            localStorage.setItem("listStudents", JSON.stringify(listStudents))
+            renderListStudent();
+        }
+        // function hiển thị listUsers
+        function renderListStudent() {
+            let result = `
+            <tr>
+                <td> Tên Sinh Viên</td>
+                <td> Mã Sinh Viên</td>
+                <td> Quê Quán </td>
+                <td> Số điện thoại </td>
+            </tr>`;
+            for (let i = 0; i < listStudents.length; i++) {
+                result +=
+                    `
+                <tr>
+                    <td> ${listStudents[i].name} </td>
+                    <td> ${listStudents[i].maSinhVien}</td>
+                    <td> ${listStudents[i].address} </td>
+                    <td>${listStudents[i].phoneNumber} </td>
+                     <td  onclick=editUser(${i})> edit </td>
+                    <td onclick=deleteUser(${i})> delete </td>
+                </tr>
+               `
+            }
+            // console.log(result);
+            document.getElementById("table").innerHTML = result;
+        }
+        renderListStudent();
+        function deleteUser(id) {
+            listStudents.splice(id, 1);
+            localStorage.setItem("listStudents", JSON.stringify(listStudents));
+            renderListStudent();
+        }
+        function editUser(id) {
+            console.log(id);
+            document.getElementById("name").value = listStudents[id].name;
+            document.getElementById("msv").value = listStudents[id].maSinhVien;
+            document.getElementById("address").value = listStudents[id].address;
+            document.getElementById("phone").value = listStudents[id].phoneNumber;
+            localStorage.setItem("flag",id);
+
+        }
+    </script>
+</body>
+
+</html>
